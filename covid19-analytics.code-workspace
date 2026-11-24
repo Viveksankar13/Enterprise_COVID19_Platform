@@ -1,0 +1,188 @@
+{
+  "folders": [
+    {
+      "path": ".",
+      "name": "🦠 COVID-19 Analytics Platform"
+    },
+    {
+      "path": "backend",
+      "name": "⚡ Backend (FastAPI)"
+    },
+    {
+      "path": "frontend",
+      "name": "⚛️ Frontend (React)"
+    },
+    {
+      "path": "etl",
+      "name": "🔄 ETL Engine"
+    },
+    {
+      "path": "airflow",
+      "name": "🌬️ Airflow DAGs"
+    },
+    {
+      "path": "database",
+      "name": "🗄️ Database"
+    },
+    {
+      "path": "docs",
+      "name": "📚 Documentation"
+    }
+  ],
+  "settings": {
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": "explicit",
+      "source.organizeImports": "explicit"
+    },
+    "editor.rulers": [88, 120],
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true,
+
+    "[python]": {
+      "editor.defaultFormatter": "charliermarsh.ruff",
+      "editor.formatOnSave": true,
+      "editor.tabSize": 4
+    },
+    "[typescript]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+      "editor.tabSize": 2
+    },
+    "[typescriptreact]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+      "editor.tabSize": 2
+    },
+    "[json]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+      "editor.tabSize": 2
+    },
+    "[yaml]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+      "editor.tabSize": 2
+    },
+    "[sql]": {
+      "editor.tabSize": 2,
+      "editor.formatOnSave": false
+    },
+
+    "python.defaultInterpreterPath": "${workspaceFolder:⚡ Backend (FastAPI)}/.venv/Scripts/python",
+    "python.analysis.typeCheckingMode": "basic",
+    "mypy-type-checker.args": ["--ignore-missing-imports"],
+
+    "files.exclude": {
+      "**/__pycache__": true,
+      "**/.mypy_cache": true,
+      "**/.ruff_cache": true,
+      "**/node_modules": true,
+      "**/.DS_Store": true,
+      "**/dist": false
+    },
+
+    "search.exclude": {
+      "**/node_modules": true,
+      "**/dist": true,
+      "**/__pycache__": true,
+      "**/data/raw": true,
+      "**/data/archive": true,
+      "**/logs": true
+    },
+
+    "docker.defaultRegistryPath": "your-registry.azurecr.io",
+
+    "eslint.workingDirectories": ["frontend"],
+    "typescript.tsdk": "frontend/node_modules/typescript/lib",
+
+    "terminal.integrated.env.windows": {
+      "PYTHONPATH": "${workspaceFolder:⚡ Backend (FastAPI)}"
+    }
+  },
+  "extensions": {
+    "recommendations": [
+      "ms-python.python",
+      "ms-python.vscode-pylance",
+      "charliermarsh.ruff",
+      "ms-python.mypy-type-checker",
+      "esbenp.prettier-vscode",
+      "dbaeumer.vscode-eslint",
+      "bradlc.vscode-tailwindcss",
+      "ms-azuretools.vscode-docker",
+      "mtxr.sqltools",
+      "mtxr.sqltools-driver-pg",
+      "redhat.vscode-yaml",
+      "eamodio.gitlens",
+      "usernamehw.errorlens",
+      "ms-playwright.playwright",
+      "streetsidesoftware.code-spell-checker"
+    ]
+  },
+  "launch": {
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "FastAPI: Debug",
+        "type": "debugpy",
+        "request": "launch",
+        "module": "uvicorn",
+        "args": [
+          "app.main:app",
+          "--reload",
+          "--host", "0.0.0.0",
+          "--port", "8000"
+        ],
+        "cwd": "${workspaceFolder:⚡ Backend (FastAPI)}",
+        "env": {
+          "APP_ENV": "development",
+          "DEBUG": "true"
+        },
+        "jinja": true
+      },
+      {
+        "name": "ETL: Run Full Pipeline",
+        "type": "debugpy",
+        "request": "launch",
+        "module": "etl.runner",
+        "cwd": "${workspaceFolder:⚡ Backend (FastAPI)}",
+        "env": {
+          "APP_ENV": "development"
+        }
+      },
+      {
+        "name": "Pytest: Run All Tests",
+        "type": "debugpy",
+        "request": "launch",
+        "module": "pytest",
+        "args": ["tests/", "-v", "--tb=short"],
+        "cwd": "${workspaceFolder:⚡ Backend (FastAPI)}"
+      }
+    ]
+  },
+  "tasks": {
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "Docker: Start All Services",
+        "type": "shell",
+        "command": "docker compose up -d",
+        "problemMatcher": []
+      },
+      {
+        "label": "Docker: Stop All Services",
+        "type": "shell",
+        "command": "docker compose down",
+        "problemMatcher": []
+      },
+      {
+        "label": "DB: Run Migrations",
+        "type": "shell",
+        "command": "docker compose exec backend alembic upgrade head",
+        "problemMatcher": []
+      },
+      {
+        "label": "ETL: Trigger Pipeline",
+        "type": "shell",
+        "command": "docker compose exec backend python -m etl.runner",
+        "problemMatcher": []
+      }
+    ]
+  }
+}

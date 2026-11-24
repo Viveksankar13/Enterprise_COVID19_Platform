@@ -1,0 +1,50 @@
+# ==============================================================================
+# DOCKER COMPOSE — DEVELOPMENT OVERRIDES
+# ==============================================================================
+# Usage: docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+# Enables: hot-reload, debug ports, source-code mounts, verbose logging
+# ==============================================================================
+
+version: "3.9"
+
+services:
+
+  postgres:
+    ports:
+      - "5432:5432"
+
+  backend:
+    build:
+      target: development
+    environment:
+      - APP_ENV=development
+      - DEBUG=true
+      - LOG_LEVEL=DEBUG
+      - BACKEND_RELOAD=true
+    volumes:
+      - ./backend/app:/app/app          # Hot-reload source mount
+      - ./etl:/app/etl
+    command: >
+      uvicorn app.main:app
+        --host 0.0.0.0
+        --port 8000
+        --reload
+        --log-level debug
+        --reload-dir /app/app
+    ports:
+      - "8000:8000"
+      - "5678:5678"                     # debugpy port
+
+  frontend:
+    build:
+      target: development
+    volumes:
+      - ./frontend/src:/app/src         # Hot-reload source mount
+      - ./frontend/public:/app/public
+    command: npm run dev -- --host 0.0.0.0 --port 5173
+    ports:
+      - "5173:5173"                     # Vite dev server
+
+  nginx:
+    volumes:
+      - ./docker/nginx/nginx.dev.conf:/etc/nginx/nginx.conf:ro
