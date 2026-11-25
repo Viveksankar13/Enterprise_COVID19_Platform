@@ -1,4 +1,4 @@
-# 🚀 Execution Guide: COVID-19 Enterprise Analytics Platform
+# 🚀 Execution Guide for the COVID-19 Enterprise Analytics Platform
 
 This guide details how to build, run, seed, and test the multi-service analytics platform.
 
